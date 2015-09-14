@@ -45,7 +45,7 @@ void cudaRecordEndAndPrint()
 
 int main(int argc, char* argv[]) {
     
-	const int ppp = 23;
+	const int ppp = 20;
 	const int SIZE = 1 << ppp;
     const int NPOT = SIZE - 3;
     //int a[SIZE], b[SIZE], c[SIZE];
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 	of<<","<<((float)t2-(float)t1);
     printArray(SIZE, b, true);
 
-
+	
     zeroArray(SIZE, c);
     printDesc("cpu scan, non-power-of-two");
 	t1 = clock();
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 	of<<","<<((float)t2-(float)t1);
     printArray(NPOT, c, true);
     printCmpResult(NPOT, b, c);
-
+	
     zeroArray(SIZE, c);
     printDesc("naive scan, power-of-two");
 	cudaEventRecord(beginEvent,0);
@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
 	cudaRecordEndAndPrint();
     //printArray(NPOT, c, true);
     printCmpResult(NPOT, b, c);
-
+	
     zeroArray(SIZE, c);
     printDesc("thrust scan, power-of-two");
 	cudaEventRecord(beginEvent,0);
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
     cudaRecordEndAndPrint();
 	//printArray(NPOT, c, true);
     printCmpResult(NPOT, b, c);
-
+	
     printf("\n");
     printf("*****************************\n");
     printf("** STREAM COMPACTION TESTS **\n");
@@ -223,7 +223,7 @@ int main(int argc, char* argv[]) {
 	cudaRecordEndAndPrint();
     //printArray(count, c, true);
     printCmpLenResult(count, expectedNPOT, b, c);
-
+	
 #endif
 
 
@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
     printf("** SIMPLE RADIX SORT TESTS **\n");
     printf("*****************************\n");
 
-	genArray(SIZE - 1, a, 127);  // Leave a 0 at the end to test that edge case
+	genArray(SIZE - 1, a, SIZE-1);  // Leave a 0 at the end to test that edge case
 	a[SIZE-1] = 0;
     printArray(SIZE, a, true);
 
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
 	zeroArray(SIZE, c);
     printDesc("radix sort, power-of-two");
 	cudaEventRecord(beginEvent,0);
-	StreamCompaction::Efficient::radixSortLauncher(SIZE,c,a,6,0);
+	StreamCompaction::Efficient::radixSortLauncher(SIZE,c,a,ppp,0);
 	cudaRecordEndAndPrint();
     printArray(SIZE, c, true);
 	printCmpResult(SIZE, b, c);
